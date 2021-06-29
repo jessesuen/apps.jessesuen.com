@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- contour.yaml
+
+patchesStrategicMerge:
+- envoy-ds.yaml
+- contour-deploy.yaml
+
+patchesJson6902:
+- target:
+    group: apps
+    version: v1
+    kind: Deployment
+    name: contour
+  path: contour-deploy-remap-ports.yaml
+- target:
+    group: apps
+    version: v1
+    kind: DaemonSet
+    name: envoy
+  path: envoy-ds-remap-ports.yaml
+- target:
+    version: v1
+    kind: Service
+    name: envoy
+  path: envoy-svc-remap-ports.yaml

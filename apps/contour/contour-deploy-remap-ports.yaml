@@ -1,0 +1,6 @@
+- op: add
+  path: /spec/template/spec/containers/0/args/-
+  value: --envoy-service-http-port=80
+- op: add
+  path: /spec/template/spec/containers/0/args/-
+  value: --envoy-service-https-port=443
