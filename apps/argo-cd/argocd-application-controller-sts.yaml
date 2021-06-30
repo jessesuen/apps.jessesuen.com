@@ -1,0 +1,14 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: argocd-application-controller
+spec:
+  template:
+    spec:
+      containers:
+      - command:
+        - argocd-application-controller
+        - --status-processors
+        - "3"
+        - --operation-processors
+        - "1"
