@@ -1,27 +1,46 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: rollouts-demo
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    ingress.kubernetes.io/force-ssl-redirect: "true"
+    kubernetes.io/tls-acme: "true"
 spec:
+  tls:
+  - secretName: rollouts-demo-tls
+    hosts:
+    - rollouts-demo.apps.jessesuen.com
+    - rollouts-demo-desired.apps.jessesuen.com
+    - rollouts-demo-stable.apps.jessesuen.com
   rules:
   - host: rollouts-demo-desired.apps.jessesuen.com
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: rollouts-demo-desired
-          servicePort: 80
+          service:
+            name: rollouts-demo-desired
+            port:
+              name: http
   - host: rollouts-demo-stable.apps.jessesuen.com
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: rollouts-demo-stable
-          servicePort: 80
+          service:
+            name: rollouts-demo-stable
+            port:
+              name: http
   - host: rollouts-demo.apps.jessesuen.com
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: rollouts-demo
-          servicePort: 80
+          service:
+            name: rollouts-demo
+            port:
+              name: http
