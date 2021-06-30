@@ -3,3 +3,7 @@ kind: Kustomization
 
 resources:
 - install.yaml
+- argo-server-ing.yaml
+
+patchesStrategicMerge:
+- argo-server-dep.yaml
