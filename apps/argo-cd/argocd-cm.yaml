@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+data:
+  url: https://cd.apps.jessesuen.com
+  admin.enabled: 'false'
+  statusbadge.enabled: 'true'
+  users.anonymous.enabled: 'true'
+  ga.trackingid: UA-2990608-1
+  dex.config: |
+    connectors:
+    - type: github
+      id: github
+      name: GitHub
+      config:
+        clientID: $dex.github.clientID
+        clientSecret: $dex.github.clientSecret
+  resource.customizations: |
+    apiextensions.k8s.io/CustomResourceDefinition:
+      ignoreDifferences: |
+        jsonPointers:
+        - /spec/preserveUnknownFields
+    batch/Job:
+      ignoreDifferences: |
+        jsonPointers:
+        - /spec/ttlSecondsAfterFinished
+    networking.k8s.io/Ingress:
+      health.lua: |
+        hs = {}
+        hs.status = "Healthy"
+        return hs
