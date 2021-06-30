@@ -2,7 +2,17 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: argocd-server
+  annotations:
+    aaa: ccc
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    ingress.kubernetes.io/force-ssl-redirect: "true"
+    kubernetes.io/ingress.class: contour
+    kubernetes.io/tls-acme: "true"
 spec:
+  tls:
+  - secretName: argocd-tls
+    hosts:
+    - cd.apps.jessesuen.com
   rules:
   - host: cd.apps.jessesuen.com
     http:
@@ -13,4 +23,4 @@ spec:
           service:
             name: argocd-server
             port:
-              number: 80
+              name: http
