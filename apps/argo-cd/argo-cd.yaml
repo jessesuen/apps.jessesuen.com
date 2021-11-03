@@ -3049,7 +3049,7 @@ spec:
         - -n
         - /usr/local/bin/argocd
         - /shared/argocd-dex
-        image: quay.io/argoproj/argocd:v2.1.0-rc3
+        image: quay.io/argoproj/argocd:v2.1.6
         imagePullPolicy: Always
         name: copyutil
         volumeMounts:
@@ -3147,7 +3147,7 @@ spec:
       automountServiceAccountToken: false
       containers:
       - command:
-        - uid_entrypoint.sh
+        - entrypoint.sh
         - argocd-repo-server
         - --redis
         - argocd-redis:6379
@@ -3224,7 +3224,13 @@ spec:
               key: reposerver.default.cache.expiration
               name: argocd-cmd-params-cm
               optional: true
-        image: quay.io/argoproj/argocd:v2.1.0-rc3
+        - name: HELM_CACHE_HOME
+          value: /helm-working-dir
+        - name: HELM_CONFIG_HOME
+          value: /helm-working-dir
+        - name: HELM_DATA_HOME
+          value: /helm-working-dir
+        image: quay.io/argoproj/argocd:v2.1.6
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
@@ -3263,6 +3269,8 @@ spec:
           name: argocd-repo-server-tls
         - mountPath: /tmp
           name: tmp
+        - mountPath: /helm-working-dir
+          name: helm-working-dir
       volumes:
       - configMap:
           name: argocd-ssh-known-hosts-cm
@@ -3277,6 +3285,8 @@ spec:
         name: gpg-keyring
       - emptyDir: {}
         name: tmp
+      - emptyDir: {}
+        name: helm-working-dir
       - name: argocd-repo-server-tls
         secret:
           items:
@@ -3439,6 +3449,12 @@ spec:
               key: server.login.attempts.expiration
               name: argocd-cmd-params-cm
               optional: true
+        - name: ARGOCD_SERVER_STATIC_ASSETS
+          valueFrom:
+            configMapKeyRef:
+              key: server.staticassets
+              name: argocd-cmd-params-cm
+              optional: true
         - name: ARGOCD_APP_STATE_CACHE_EXPIRATION
           valueFrom:
             configMapKeyRef:
@@ -3463,7 +3479,7 @@ spec:
               key: server.default.cache.expiration
               name: argocd-cmd-params-cm
               optional: true
-        image: quay.io/argoproj/argocd:v2.1.0-rc3
+        image: quay.io/argoproj/argocd:v2.1.6
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
@@ -3653,7 +3669,7 @@ spec:
               key: controller.default.cache.expiration
               name: argocd-cmd-params-cm
               optional: true
-        image: quay.io/argoproj/argocd:v2.1.0-rc3
+        image: quay.io/argoproj/argocd:v2.1.6
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
